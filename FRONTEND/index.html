@@ -5,12 +5,13 @@
   <title>Vueling</title>
   <style>
     body {
-      background-color: #000000;
+      background-color: #000;
       color: #bbb;
       font-family: sans-serif;
       margin: 0;
       padding: 2rem;
     }
+  
     header {
       display: flex;
       justify-content: space-between;
@@ -28,21 +29,47 @@
       color: #bbb;
       margin: 0;
     }
+  
     table {
-      width: 60%;
-      border-collapse: collapse;
+      width: 80%;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-top: 2rem;
-      background-color: #000000;
-    }
-    th, td {
+      background-color: #111;
       border: 1px solid #444;
-      padding: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    th, td {
+      padding: 12px 16px;
       text-align: center;
+      border-bottom: 1px solid #333;
     }
+  
     th {
-      background-color: #000000;
-      color: #bbb;
+      background-color: #111;
+      color: #ccc;
+      font-weight: bold;
+      border-bottom: 2px solid #444;
     }
+  
+    tr:nth-child(even) {
+      background-color: #111;
+    }
+  
+    tr:hover {
+      background-color: #1a1a1a;
+    }
+  
+    a {
+      color: #bbb;
+      text-decoration: none;
+    }
+  
+    a:hover {
+      text-decoration: underline;
+      color: #fff;
     tr {
       background-color: #000000;
     }
@@ -66,13 +93,48 @@
         <th>Boarding Gate</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>VY1234</td>
-        <td>08:30</td>
-        <td>A12</td>
-      </tr>
+    <tbody id="data-table">
+      <!-- Data will go here -->
     </tbody>
   </table>
+
+  <script>
+    // Llamar a la API para obtener los datos
+    fetch('http://127.0.0.1:5000/get')
+      .then(response => {
+        if (!response.ok) throw new Error("Error en la respuesta del servidor");
+        return response.json();
+      })
+      .then(data => {
+        const tableBody = document.getElementById("data-table");
+        data.data.forEach(item => {
+          const row = document.createElement("tr");
+  
+          const flightId = document.createElement("td");
+          const flightLink = document.createElement("a");
+          flightLink.href = `vuelo.html?id=${item.string1}`;
+          flightLink.textContent = item.string1;
+          flightLink.style.color = "#bbb";
+          flightId.appendChild(flightLink);
+  
+          const departure = document.createElement("td");
+          departure.textContent = new Date(item.datetime_obj).toLocaleString(); // formatea fecha
+  
+          const gate = document.createElement("td");
+          gate.textContent = item.string2;
+  
+          row.appendChild(flightId);
+          row.appendChild(departure);
+          row.appendChild(gate);
+  
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+      });
+  </script>
+  
+
 </body>
 </html>
