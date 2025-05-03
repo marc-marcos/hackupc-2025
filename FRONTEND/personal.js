@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('comment-form');
     const deleteForm = document.getElementById('delete-form');
     const flightSelect = document.getElementById('flight-select');
-    
+    const qrForm = document.getElementById('custom-data-form');
+
     // Function to fetch and populate flight options
     const loadFlightOptions = async () => {
         try {
@@ -78,23 +79,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Format payload as an array to match the existing API pattern
-        const payload = [
+        const payload2= [
             flightId,  // Flight ID
             comment    // Comment text
         ];
+        const payload = {
+            flight_id: flightId,
+            update_text: comment,
+            submitter_name: "Vueling" // Or get this from user input if needed
+        };
         
         try {
+            console.log(payload);
             const response = await fetch('http://127.0.0.1:5000/api/postUpdate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                //TO DO: add name of the comentarist
-                body: JSON.stringify({
-                    flight_id: flightId,
-                    update_text: comment,
-                    submitter_name: "Vueling",
-                }),
+                body: JSON.stringify(payload),
             });
             
             if (!response.ok) throw new Error('Failed to send comment');
@@ -129,4 +131,40 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(err);
         }
     });
+
+
+    qrForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const customString = document.getElementById('data').value.trim();
+        const customNumber = parseInt(document.getElementById('punctuation').value.trim());
+        
+        // Format payload as an array to match your API pattern
+        const payload = [
+            customString,  // String value
+            customNumber   // Integer value
+        ];
+        
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    qr_string: customString,
+                    qr_integer: customNumber,
+                }),
+            });
+            
+            if (!response.ok) throw new Error('Failed to send custom data');
+            
+            alert('Custom data sent successfully!');
+            qrForm.reset();
+        } catch (err) {
+            alert('Error sending custom data.');
+            console.error(err);
+        }
+    });
+
 });
