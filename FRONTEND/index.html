@@ -10,26 +10,51 @@
       font-family: sans-serif;
       padding: 2rem;
     }
+  
     h1 {
       color: #bbb;
     }
+  
     table {
       width: 80%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-top: 2rem;
-      background-color: #000;
-    }
-    th, td {
+      background-color: #111;
       border: 1px solid #444;
-      padding: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    th, td {
+      padding: 12px 16px;
       text-align: center;
+      border-bottom: 1px solid #333;
     }
+  
     th {
-      background-color: #000;
-      color: #bbb;
+      background-color: #111;
+      color: #ccc;
+      font-weight: bold;
+      border-bottom: 2px solid #444;
     }
-    tr {
-      background-color: #000;
+  
+    tr:nth-child(even) {
+      background-color: #111;
+    }
+  
+    tr:hover {
+      background-color: #1a1a1a;
+    }
+  
+    a {
+      color: #bbb;
+      text-decoration: none;
+    }
+  
+    a:hover {
+      text-decoration: underline;
+      color: #fff;
     }
   </style>
 </head>
