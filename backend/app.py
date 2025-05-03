@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, render_template, request, jsonify, render_template_string
 from datetime import datetime
 import sqlite3
 from flask_cors import CORS
@@ -50,7 +50,11 @@ init_db()
 # Initialize the points table
 init_points_table()
 
-@app.route('/post', methods=['POST'])
+###############################
+#       API METHODS
+###############################
+
+@app.route('/api/postFlight', methods=['POST'])
 def post_object():
     try:
         obj = request.get_json()
@@ -74,7 +78,7 @@ def post_object():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/get', methods=['GET'])
+@app.route('/api/getFlights', methods=['GET'])
 def get_all_objects():
     try:
         # Fetch all records from the data_store table
@@ -101,7 +105,7 @@ def get_all_objects():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/flight/update', methods=['POST'])
+@app.route('/api/postUpdate', methods=['POST'])
 def post_flight_update():
     try:
         data = request.get_json()
@@ -127,8 +131,10 @@ def post_flight_update():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/flight/updates/<flight_id>', methods=['GET'])
+@app.route('/api/getUpdates/<flight_id>', methods=['GET'])
 def get_flight_updates(flight_id):
+    print("Can i print?")
+
     try:
         # Fetch all updates for the given flight ID
         with sqlite3.connect(DATABASE) as conn:
@@ -149,37 +155,8 @@ def get_flight_updates(flight_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/flight/updates/html/<flight_id>', methods=['GET'])
-def display_flight_updates_html(flight_id):
-    try:
-        # Fetch all updates for the given flight ID
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT update_text, timestamp, submitter_name FROM flight_updates WHERE flight_id = ?
-            ''', (flight_id,))
-            rows = cursor.fetchall()
-
-        # Generate an HTML page to display the updates
-        updates_html = ''.join(
-            f"<p><strong>{row[1]}</strong> by {row[2]}: {row[0]}</p>" for row in rows
-        )
-        html_template = f"""
-        <!DOCTYPE html>
-        <html>
-        <head><title>Flight Updates for {flight_id}</title></head>
-        <body>
-            <h1>Updates for Flight {flight_id}</h1>
-            {updates_html}
-        </body>
-        </html>
-        """
-        return render_template_string(html_template)
-
-    except Exception as e:
-        return f"<p>Error: {str(e)}</p>", 500
     
-@app.route('/delete', methods=['DELETE'])
+@app.route('/api/deleteFlights', methods=['DELETE'])
 def delete_all_data():
     try:
         with sqlite3.connect(DATABASE) as conn:
@@ -191,7 +168,7 @@ def delete_all_data():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/points', methods=['GET'])
+@app.route('/api/ranking', methods=['GET'])
 def get_all_points():
     try:
         # Fetch all records from the points_table, ordered by points in descending order
@@ -209,7 +186,7 @@ def get_all_points():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/points', methods=['POST'])
+@app.route('/api/ranking', methods=['POST'])
 def add_points():
     try:
         data = request.get_json()
@@ -233,7 +210,7 @@ def add_points():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/points', methods=['DELETE'])
+@app.route('/api/ranking', methods=['DELETE'])
 def delete_all_points():
     try:
         # Delete all records from the points_table
@@ -246,6 +223,31 @@ def delete_all_points():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+###############################
+#   HTML RENDERING METHODS
+###############################
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template("index.html")
+
+@app.route('/ranking', methods=['GET'])
+def ranking():
+    return render_template("ranking.html")
+
+@app.route('/juego', methods=['GET'])
+def juego():
+    return render_template("juego.html")
+
+@app.route('/personal', methods=['GET'])
+def personal():
+    return render_template("personal.html")
+
+@app.route('/vuelo/<vuelo_num>', methods=['GET'])
+def vuelo(vuelo_num):
+    return render_template("vuelo.html", flight_id=vuelo_num)
 
 
 if __name__ == '__main__':
