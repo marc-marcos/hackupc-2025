@@ -1,4 +1,10 @@
 function escanear(username) {
+  //si no se ha escrito un nombre de usuario, que no se pueda activar la camara
+  if (!username || username.trim() === '') {
+    const message = document.getElementById('message');
+    message.textContent = "Por favor, ingresa un nombre de usuario antes de escanear.";
+    return; 
+  }
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
@@ -7,18 +13,18 @@ function escanear(username) {
   let stream;
   let scanning = false;
 
-  // Si ya estamos escaneando, no hacer nada
+  // si ya estamos escaneando, no hacer nada :)
   if (scanning) {
     return;
   }
 
-  // Resetear el estado
+  // resetear el estado
   video.style.display = 'block';
   startScanButton.textContent = 'Escaneando...';
   message.textContent = "Iniciando cámara...";
   scanning = true;
 
-  // Solicitar acceso a la cámara
+  // solicitar acceso a la cámara
   navigator.mediaDevices.getUserMedia({ 
     video: { 
       facingMode: "environment",
@@ -30,12 +36,10 @@ function escanear(username) {
     stream = s;
     video.srcObject = stream;
     
-    // Esperar a que el video esté listo para reproducir
     return video.play();
   })
   .then(() => {
     message.textContent = "Cámara activada. Apunta a un código QR.";
-    // Empezar a escanear
     scanQR();
   })
   .catch(err => {
@@ -45,12 +49,12 @@ function escanear(username) {
     startScanButton.textContent = 'Intentar de nuevo';
     scanning = false;
     
-    // Mostrar mensajes más específicos según el error
     if (err.name === 'NotAllowedError') {
       message.textContent = "Permiso de cámara denegado. Por favor habilita los permisos.";
     } else if (err.name === 'NotFoundError') {
       message.textContent = "No se encontró cámara trasera. Usando cámara frontal...";
-      // Intentar con cámara frontal
+      // intentar con cámara frontal
+      // TODO: camara trasera en el movil/ poder cambiar?
       setTimeout(() => escanear(username), 1000);
     }
   });

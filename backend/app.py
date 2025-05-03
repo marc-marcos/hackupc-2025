@@ -307,6 +307,10 @@ def personal():
 def vuelo(vuelo_num):
     return render_template("vuelo.html", flight_id=vuelo_num)
 
+@app.route('/map', methods=['GET'])
+def mapa():
+    return render_template("map.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
