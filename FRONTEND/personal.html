@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Low Power Web Form</title>
+  <title>Vueling Admin Panel</title>
   <style>
     body {
       font-family: sans-serif;
@@ -11,32 +11,46 @@
       color: #bbb;
       padding: 2rem;
     }
-
+    h1, h2 {
+      text-align: center;
+      color: #ddd;
+    }
+    section {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #333;
+      border-radius: 1rem;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
     form {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      max-width: 400px;
-      margin: auto;
     }
-
-    input, button {
+    input, button, select, textarea {
       padding: 0.5rem;
       border-radius: 0.5rem;
       border: none;
     }
-
-    input {
+    input, select, textarea {
       background: #111;
       color: #bbb;
     }
-
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
     button {
-      background: #0a84ff;
+      background: #4da6ff;
       color: white;
       cursor: pointer;
     }
-
+    .delete-button {
+      background: #ff6666; /* light red */
+      color: white;
+    }
     button:disabled {
       background: #555;
       cursor: not-allowed;
@@ -44,13 +58,35 @@
   </style>
 </head>
 <body>
-  <h1>Vueling flight information</h1>
-  <form id="data-form">
-    <input type="text" id="id" placeholder="Flight ID" required />
-    <input type="text" id="departure" placeholder="Departure hour" required />
-    <input type="text" id="gate" placeholder="Boarding gate" required />
-    <button type="submit">Send</button>
-  </form>
+  <h1>Vueling Flights Information Management</h1>
+  
+  <section>
+    <h2>Submit Flight Info</h2>
+    <form id="flight-form">
+      <input type="text" id="id" placeholder="Flight ID" required />
+      <input type="text" id="departure" placeholder="Departure hour" required />
+      <input type="text" id="gate" placeholder="Boarding gate" required />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+  
+  <section>
+    <h2>Submit Comment to Flight</h2>
+    <form id="comment-form">
+      <select id="flight-select" required>
+        <option value="">Select a flight</option>
+      </select>
+      <textarea id="comment" placeholder="Write your comment..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+  
+  <section>
+    <h2>Delete Ranking Info</h2>
+    <form id="delete-form">
+      <button type="submit" class="delete-button">Delete All Data</button>
+    </form>
+  </section>
 
   <script src="personal.js" defer></script>
 </body>
