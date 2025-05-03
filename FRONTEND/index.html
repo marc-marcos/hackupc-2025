@@ -119,7 +119,7 @@
           flightId.appendChild(flightLink);
   
           const departure = document.createElement("td");
-          departure.textContent = new Date(item.datetime_obj).toLocaleString(); // formatea fecha
+          departure.textContent = item.datetime_obj; // formatea fecha
   
           const gate = document.createElement("td");
           gate.textContent = item.string2;
