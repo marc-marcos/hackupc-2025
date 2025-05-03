@@ -31,24 +31,8 @@ def init_db():
         ''')
         conn.commit()
 
-# Add a new table for storing names and points
-def init_points_table():
-    with sqlite3.connect(DATABASE) as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS points_table (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                points INTEGER NOT NULL
-            )
-        ''')
-        conn.commit()
-
 # Call the function to initialize the database
 init_db()
-
-# Initialize the points table
-init_points_table()
 
 @app.route('/post', methods=['POST'])
 def post_object():
@@ -178,75 +162,3 @@ def display_flight_updates_html(flight_id):
 
     except Exception as e:
         return f"<p>Error: {str(e)}</p>", 500
-    
-@app.route('/delete', methods=['DELETE'])
-def delete_all_data():
-    try:
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('DELETE FROM data_store')
-            conn.commit()
-        return jsonify({"status": "success", "message": "All data deleted."}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/points', methods=['GET'])
-def get_all_points():
-    try:
-        # Fetch all records from the points_table, ordered by points in descending order
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT name, points FROM points_table ORDER BY points DESC')
-            rows = cursor.fetchall()
-
-        # Format the data as a list of dictionaries
-        data = [{"name": row[0], "points": row[1]} for row in rows]
-
-        return jsonify({"status": "success", "points": data}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/points', methods=['POST'])
-def add_points():
-    try:
-        data = request.get_json()
-        if not isinstance(data, dict) or 'name' not in data or 'points' not in data:
-            return jsonify({"error": "Expected a JSON object with 'name' and 'points'"}), 400
-
-        name = data['name']
-        points = data['points']
-
-        # Insert the new entry into the points_table
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO points_table (name, points)
-                VALUES (?, ?)
-            ''', (name, points))
-            conn.commit()
-
-        return jsonify({"status": "success", "name": name, "points": points}), 201
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-@app.route('/points', methods=['DELETE'])
-def delete_all_points():
-    try:
-        # Delete all records from the points_table
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('DELETE FROM points_table')
-            conn.commit()
-
-        return jsonify({"status": "success", "message": "All points deleted."}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
