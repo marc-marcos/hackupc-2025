@@ -154,7 +154,7 @@
     fetch('http://127.0.0.1:5000/get')
       .then(response => response.json())
       .then(data => {
-        const flight = data.data.find(f => f.string1 === flightId);
+        const flight = data.data_store.find(f => f.string1 === flightId);
         if (!flight) {
           document.getElementById("flight-details").textContent = "Flight not found.";
           return;
