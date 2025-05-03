@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                //TO DO: add name of the comentarist
                 body: JSON.stringify(payload),
             });
             
