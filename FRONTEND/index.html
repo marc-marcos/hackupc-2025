@@ -80,9 +80,9 @@
   <header>
     <h1>Vueling</h1>
     <nav>
-      <a href="juego.html">Desafío</a>
-      <a href="ranking.html">Ranking</a>
       <a href="http://127.0.0.1:5000/map">Mapa</a>
+      <a href="http://127.0.0.1:5000/juego">Desafío</a>
+      <a href="http://127.0.0.1:5000/ranking">Ranking</a>
     </nav>
   </header>
   
@@ -114,7 +114,7 @@
   
           const flightId = document.createElement("td");
           const flightLink = document.createElement("a");
-          flightLink.href = `vuelo.html?id=${item.string1}`;
+          flightLink.href = `vuelo/${item.string1}`;
           flightLink.textContent = item.string1;
           flightLink.style.color = "#bbb";
           flightId.appendChild(flightLink);
