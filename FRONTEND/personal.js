@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             flightSelect.innerHTML = '<option value="">Select a flight</option>';
             
             // Add flight options to the select dropdown based on the API structure
-            data.data.forEach(item => {
+            data.data_store.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item.string1; // Flight ID based on your API structure
                 option.textContent = item.string1; // Display just the flight ID
