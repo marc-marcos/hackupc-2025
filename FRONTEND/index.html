@@ -8,10 +8,25 @@
       background-color: #000000;
       color: #bbb;
       font-family: sans-serif;
+      margin: 0;
       padding: 2rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: #bbb;
+      text-decoration: none;
+      margin-left: 1rem;
+    }
+    nav a:hover {
+      color: #fff;
     }
     h1 {
       color: #bbb;
+      margin: 0;
     }
     table {
       width: 60%;
@@ -28,14 +43,21 @@
       background-color: #000000;
       color: #bbb;
     }
-    tr{
+    tr {
       background-color: #000000;
     }
-    
   </style>
 </head>
 <body>
-  <h1>Vueling</h1>
+  <header>
+    <h1>Vueling</h1>
+    <nav>
+      <a href="juego.html">Desafío</a>
+      <a href="ranking.html">Ranking</a>
+    </nav>
+  </header>
+  
+  <hr>
   <table>
     <thead>
       <tr>
