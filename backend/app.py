@@ -162,3 +162,18 @@ def display_flight_updates_html(flight_id):
 
     except Exception as e:
         return f"<p>Error: {str(e)}</p>", 500
+    
+@app.route('/delete', methods=['DELETE'])
+def delete_all_data():
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM data_store')
+            conn.commit()
+        return jsonify({"status": "success", "message": "All data deleted."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
