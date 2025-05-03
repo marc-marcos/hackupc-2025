@@ -101,14 +101,14 @@
 
   <script>
     // Llamar a la API para obtener los datos
-    fetch('http://127.0.0.1:5000/get')
+    fetch('http://127.0.0.1:5000/api/getFlights')
       .then(response => {
         if (!response.ok) throw new Error("Error en la respuesta del servidor");
         return response.json();
       })
       .then(data => {
         const tableBody = document.getElementById("data-table");
-        data.data.forEach(item => {
+        data.data_store.forEach(item => {
           const row = document.createElement("tr");
   
           const flightId = document.createElement("td");

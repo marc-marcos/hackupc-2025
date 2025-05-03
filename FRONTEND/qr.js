@@ -72,7 +72,7 @@ function escanear(username) {
           stopCamera();
           
           try {
-            const response = await fetch('http://127.0.0.1:5000/post', {
+            const response = await fetch('http://127.0.0.1:5000/api/postFlight', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

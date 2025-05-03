@@ -137,8 +137,10 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const flightId = params.get('id');
+    const flightId = "{{ flight_id }}"
+    console.log(flightId);
+    console.log(flightId);
+    console.log(flightId);
     
     // Clear error messages on input
     document.getElementById("name-input").addEventListener("input", function() {
@@ -151,7 +153,7 @@
     });
   
     // Get flight details
-    fetch('http://127.0.0.1:5000/get')
+    fetch('http://127.0.0.1:5000/api/getFlights')
       .then(response => response.json())
       .then(data => {
         const flight = data.data_store.find(f => f.string1 === flightId);
@@ -181,7 +183,7 @@
       });
   
     // Get flight comments with improved display
-    fetch(`http://127.0.0.1:5000/flight/updates/${flightId}`)
+    fetch(`http://127.0.0.1:5000/api/getUpdates/${flightId}`)
       .then(response => response.json())
       .then(data => {
         const commentsList = document.getElementById("comments");
@@ -276,7 +278,7 @@
         }
       }
 
-      fetch('http://127.0.0.1:5000/flight/update', {
+      fetch('http://127.0.0.1:5000/api/postUpdate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

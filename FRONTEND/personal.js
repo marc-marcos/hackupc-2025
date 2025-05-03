@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to fetch and populate flight options
     const loadFlightOptions = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/get');
+            const response = await fetch('http://127.0.0.1:5000/api/getFlights');
             
             if (!response.ok) throw new Error('Failed to fetch flights');
             
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/post', {
+            const response = await fetch('http://127.0.0.1:5000/api/postFlight', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/flight/update', {
+            const response = await fetch('http://127.0.0.1:5000/api/postUpdate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Are you sure you want to delete all data from the ranking?')) return;
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/delete', {
+            const response = await fetch('http://127.0.0.1:5000/api/deleteFlights', {
                 method: 'DELETE'
             });
             
