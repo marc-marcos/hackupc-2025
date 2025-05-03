@@ -4,15 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
   
-      const payload = {
-        name: document.getElementById('id').value.trim(),
-        email: document.getElementById('departure').value.trim(),
-        message: document.getElementById('gate').value.trim(),
-      };
+      const payload = [
+        document.getElementById('id').value.trim(),
+        document.getElementById('departure').value.trim(),
+        document.getElementById('gate').value.trim()
+      ];
   
       try {
-        const response = await fetch('http://192.168.1.42/api', {
-          method: 'PUT',
+        const response = await fetch('http://127.0.0.1:5000/post', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!response.ok) throw new Error('Failed to send');
   
         alert('Data sent successfully!');
+        form.reset();  // This clears all input fields
       } catch (err) {
         alert('Error sending data.');
       }

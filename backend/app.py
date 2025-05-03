@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template_string
 from datetime import datetime
 import sqlite3
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # This enables CORS for all routes
 
 # Initialize SQLite database
 DATABASE = 'data_store.db'
