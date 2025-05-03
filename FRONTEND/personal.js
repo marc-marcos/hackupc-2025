@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Are you sure you want to delete all data from the ranking?')) return;
         
         try {
-            const response = await fetch('http://127.0.0.1:5000/delete', {
+            const response = await fetch('http://127.0.0.1:5000/points', {
                 method: 'DELETE'
             });
             
