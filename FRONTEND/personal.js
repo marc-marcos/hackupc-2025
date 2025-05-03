@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('comment-form');
     const deleteForm = document.getElementById('delete-form');
     const flightSelect = document.getElementById('flight-select');
-    
+    const customDataForm = document.getElementById('custom-data-form');
+
     // Function to fetch and populate flight options
     const loadFlightOptions = async () => {
         try {
@@ -129,4 +130,37 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(err);
         }
     });
+
+
+customDataForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const customString = document.getElementById('custom-string').value.trim();
+    const customNumber = parseInt(document.getElementById('custom-number').value.trim());
+    
+    // Format payload as an array to match your API pattern
+    const payload = [
+        customString,  // String value
+        customNumber   // Integer value
+    ];
+    
+    try {
+        const response = await fetch('http://127.0.0.1:5000/custom', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) throw new Error('Failed to send custom data');
+        
+        alert('Custom data sent successfully!');
+        customDataForm.reset();
+    } catch (err) {
+        alert('Error sending custom data.');
+        console.error(err);
+    }
+});
+
 });
