@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flight Info</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #bbb;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    h1, h2 {
+      color: #bbb;
+    }
+    table {
+      width: 80%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      background-color: #111;
+      border: 1px solid #444;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #1a1a1a;
+      color: #ddd;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+    }
+
+    tr:nth-child(even) {
+      background-color: #181818;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #121212;
+    }
+
+    tr:hover {
+      background-color: #222;
+    }
+    #comment-form {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #333;
+      border-radius: 8px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      background-color: #222;
+      color: #bbb;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #bbb;
+    }
+    button {
+      background-color: #444;
+      color: #bbb;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #666;
+    }
+    
+    /* Nuevos estilos para los comentarios */
+    #comments {
+      list-style-type: none;
+      padding: 0;
+      width: 80%;
+    }
+    .comment-box {
+      background-color: #222;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .comment-header {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #bbb;
+    }
+    .comment-content {
+      margin-bottom: 1.5rem;
+    }
+    .comment-timestamp {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 1rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+    
+    /* Error message style */
+    .error-message {
+      color: #bbb;
+      font-size: 0.9rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Flight Details</h1>
+  <div id="flight-details"></div>
+
+  <h2>Passenger Comments</h2>
+  <ul id="comments"></ul>
+
+  <!-- Comment Submission Form -->
+  <div id="comment-form">
+    <h3>Add a Comment</h3>
+    <input type="text" id="name-input" placeholder="Enter a name..." style="margin-bottom: 0.5rem;" required />
+    <div id="name-error" class="error-message">Please enter a name.</div>
+    <div id="reserved-name-error" class="error-message">This name is reserved. Please use a different name.</div>
+    <input type="text" id="comment-input" placeholder="Enter your comment..." required />
+    <div id="comment-error" class="error-message">Please enter a comment</div>
+    <button id="submit-comment">Submit Comment</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const flightId = params.get('id');
+    
+    // Clear error messages on input
+    document.getElementById("name-input").addEventListener("input", function() {
+      document.getElementById("name-error").style.display = "none";
+      document.getElementById("reserved-name-error").style.display = "none";
+    });
+    
+    document.getElementById("comment-input").addEventListener("input", function() {
+      document.getElementById("comment-error").style.display = "none";
+    });
+  
+    // Get flight details
+    fetch('http://127.0.0.1:5000/get')
+      .then(response => response.json())
+      .then(data => {
+        const flight = data.data.find(f => f.string1 === flightId);
+        if (!flight) {
+          document.getElementById("flight-details").textContent = "Flight not found.";
+          return;
+        }
+  
+        const table = document.createElement("table");
+        const header = document.createElement("tr");
+        ["Flight ID", "Departure", "Boarding Gate"].forEach(text => {
+          const th = document.createElement("th");
+          th.textContent = text;
+          header.appendChild(th);
+        });
+        table.appendChild(header);
+  
+        const row = document.createElement("tr");
+        [flight.string1, new Date(flight.datetime_obj).toLocaleString(), flight.string2].forEach(val => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          row.appendChild(td);
+        });
+        table.appendChild(row);
+  
+        document.getElementById("flight-details").appendChild(table);
+      });
+  
+    // Get flight comments with improved display
+    fetch(`http://127.0.0.1:5000/flight/updates/${flightId}`)
+      .then(response => response.json())
+      .then(data => {
+        const commentsList = document.getElementById("comments");
+        if (data.updates.length === 0) {
+          const emptyMessage = document.createElement("div");
+          emptyMessage.className = "comment-box";
+          emptyMessage.innerHTML = "<div class='comment-content'>No comments yet.</div>";
+          commentsList.appendChild(emptyMessage);
+        } else {
+          data.updates.forEach (update => {
+            // Use the name from the update if it exists, otherwise default to "Vueling"
+            const name = update.name || "unknown";
+            const commentBox = createCommentElement(update.update_text, update.timestamp, name);
+            commentsList.appendChild(commentBox);
+          });
+        }
+      });
+    
+    // Function to create a styled comment element
+    function createCommentElement(text, timestamp, name = "Vueling") {
+      const li = document.createElement("li");
+      const commentBox = document.createElement("div");
+      commentBox.className = "comment-box";
+      
+      const header = document.createElement("div");
+      header.className = "comment-header";
+      header.textContent = name + ":";
+      
+      const content = document.createElement("div");
+      content.className = "comment-content";
+      content.textContent = text;
+      
+      const time = document.createElement("div");
+      time.className = "comment-timestamp";
+      time.textContent = new Date(timestamp).toLocaleString();
+      
+      commentBox.appendChild(header);
+      commentBox.appendChild(content);
+      commentBox.appendChild(time);
+      li.appendChild(commentBox);
+      
+      return li;
+    }
+    
+    // Function to check if name is reserved
+    function isReservedName(name) {
+      const lowerCaseName = name.toLowerCase();
+      return lowerCaseName === "vueling";
+    }
+  
+    // Submit a new comment
+    document.getElementById("submit-comment").addEventListener("click", function() {
+      const comment = document.getElementById("comment-input").value.trim();
+      const name = document.getElementById("name-input").value.trim();
+      
+      let isValid = true;
+      
+      // Check if name is empty
+      if (!name) {
+        document.getElementById("name-error").style.display = "block";
+        document.getElementById("reserved-name-error").style.display = "none";
+        isValid = false;
+      } else if (isReservedName(name)) {
+        // Check if name is reserved
+        document.getElementById("name-error").style.display = "none";
+        document.getElementById("reserved-name-error").style.display = "block";
+        isValid = false;
+      } else {
+        document.getElementById("name-error").style.display = "none";
+        document.getElementById("reserved-name-error").style.display = "none";
+      }
+      
+      // Check if comment is empty
+      if (!comment) {
+        document.getElementById("comment-error").style.display = "block";
+        isValid = false;
+      } else {
+        document.getElementById("comment-error").style.display = "none";
+      }
+      
+      if (!isValid) {
+        return;
+      }
+      
+      // Check if "No comments yet" message exists and remove it
+      const commentsList = document.getElementById("comments");
+      const emptyMessage = commentsList.querySelector(".comment-box:only-child");
+      if (emptyMessage && emptyMessage.querySelector(".comment-content").textContent === "No comments yet.") {
+        commentsList.innerHTML = '';
+      }
+
+      fetch('http://127.0.0.1:5000/flight/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          flight_id: flightId,
+          update_text: comment,
+          name: name  // Adding name to the request
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          const newComment = createCommentElement(data.update_text, data.timestamp, name);
+          document.getElementById("comments").appendChild(newComment);
+          document.getElementById("comment-input").value = '';  // Clear comment input
+          // We're not clearing the name input to make it easier for the same user to add multiple comments
+        } else {
+          alert("Error submitting the comment.");
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Error submitting the comment.");
+      });
+    });
+  </script>
+  
+</body>
+</html>
