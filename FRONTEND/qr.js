@@ -78,8 +78,10 @@ function escanear(username) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                username: username,
-                qr_data: code.data
+                // ! REPASAR QUE VAMOS A PONER EN LOS QR
+                id: username,
+                name: code.data,
+                points: code.data
               }),
             });
 
