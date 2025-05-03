@@ -13,18 +13,18 @@ function escanear(username) {
   let stream;
   let scanning = false;
 
-  // Si ya estamos escaneando, no hacer nada
+  // si ya estamos escaneando, no hacer nada :)
   if (scanning) {
     return;
   }
 
-  // Resetear el estado
+  // resetear el estado
   video.style.display = 'block';
   startScanButton.textContent = 'Escaneando...';
   message.textContent = "Iniciando cámara...";
   scanning = true;
 
-  // Solicitar acceso a la cámara
+  // solicitar acceso a la cámara
   navigator.mediaDevices.getUserMedia({ 
     video: { 
       facingMode: "environment",
@@ -53,7 +53,8 @@ function escanear(username) {
       message.textContent = "Permiso de cámara denegado. Por favor habilita los permisos.";
     } else if (err.name === 'NotFoundError') {
       message.textContent = "No se encontró cámara trasera. Usando cámara frontal...";
-      // Intentar con cámara frontal
+      // intentar con cámara frontal
+      // TODO: camara trasera en el movil/ poder cambiar?
       setTimeout(() => escanear(username), 1000);
     }
   });
@@ -73,65 +74,35 @@ function escanear(username) {
         if (code) {
           message.textContent = "QR detectado! Procesando...";
           stopCamera();
-
-          const checkResponse = await fetch(`http://127.0.0.1:5000/api/checkUser/${username}`);
-          if (!checkResponse.ok) {
-            throw new Error(`HTTP error! status: ${checkResponse.status}`);
-          }
-
-          const userExists = await checkResponse.json();
-
-          if (userExists.exists) { // si el usuario y aexiste, se hace un update
-            // Si el usuario ya existe, hacer un update
-            const updateResponse = await fetch('http://127.0.0.1:5000/api/updateFlight', {
-              method: 'PUT',
+          
+          try {
+            const response = await fetch('http://127.0.0.1:5000/api/postFlight', {
+              method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
+                // ! REPASAR QUE VAMOS A PONER EN LOS QR
                 id: username,
                 name: code.data,
                 points: code.data
               }),
             });
 
-            if (!updateResponse.ok) {
-              throw new Error(`HTTP error! status: ${updateResponse.status}`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const updateResult = await updateResponse.json();
-            message.textContent = `QR actualizado para ${username}! ${updateResult.message || ''}`;
-          } 
-          else { // si no existe el user, se hace un post
-            try {
-              const response = await fetch('http://127.0.0.1:5000/api/postFlight', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  // ! REPASAR QUE VAMOS A PONER EN LOS QR
-                  id: username,
-                  name: code.data,
-                  points: code.data
-                }),
-              });
-
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-
-              const result = await response.json();
-              message.textContent = `QR registrado para ${username}! ${result.message || ''}`;
-            } catch (err) {
-              console.error("Error al enviar datos:", err);
-              message.textContent = "Error al registrar el QR. Intenta nuevamente.";
-            }
-            
-            startScanButton.textContent = 'Escanear otro QR';
-            scanning = false;
-            return;
+            const result = await response.json();
+            message.textContent = `QR registrado para ${username}! ${result.message || ''}`;
+          } catch (err) {
+            console.error("Error al enviar datos:", err);
+            message.textContent = "Error al registrar el QR. Intenta nuevamente.";
           }
+          
+          startScanButton.textContent = 'Escanear otro QR';
+          scanning = false;
+          return;
         }
       }
       requestAnimationFrame(scanQR);
