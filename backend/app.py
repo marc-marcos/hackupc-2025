@@ -44,11 +44,27 @@ def init_points_table():
         ''')
         conn.commit()
 
+# Add a new table for storing QR objects
+def init_qr_table():
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS qr_table (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                qr_string TEXT NOT NULL,
+                qr_integer INTEGER NOT NULL
+            )
+        ''')
+        conn.commit()
+
 # Call the function to initialize the database
 init_db()
 
 # Initialize the points table
 init_points_table()
+
+# Initialize the QR table
+init_qr_table()
 
 ###############################
 #       API METHODS
@@ -223,6 +239,48 @@ def delete_all_points():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/qr', methods=['GET'])
+def get_all_qr():
+    try:
+        # Fetch all records from the qr_table
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT qr_string, qr_integer FROM qr_table')
+            rows = cursor.fetchall()
+
+        # Format the data as a list of dictionaries
+        data = [{"qr_string": row[0], "qr_integer": row[1]} for row in rows]
+
+        return jsonify({"status": "success", "qr_objects": data}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/qr', methods=['POST'])
+def add_qr():
+    try:
+        data = request.get_json()
+        if not isinstance(data, dict) or 'qr_string' not in data or 'qr_integer' not in data:
+            return jsonify({"error": "Expected a JSON object with 'qr_string' and 'qr_integer'"}), 400
+
+        qr_string = data['qr_string']
+        qr_integer = data['qr_integer']
+
+        # Insert the new QR object into the qr_table
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO qr_table (qr_string, qr_integer)
+                VALUES (?, ?)
+            ''', (qr_string, qr_integer))
+            conn.commit()
+
+        return jsonify({"status": "success", "qr_string": qr_string, "qr_integer": qr_integer}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 ###############################
