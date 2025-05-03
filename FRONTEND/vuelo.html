@@ -2,16 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Flight Info</title>
+  <title>Vueling</title>
   <style>
     body {
-      background-color: #000;
+      background-color: #000000;
       color: #bbb;
       font-family: sans-serif;
+      margin: 0;
       padding: 2rem;
     }
-    h1, h2 {
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
       color: #bbb;
+      text-decoration: none;
+      margin-left: 1rem;
+    }
+    nav a:hover {
+      color: #fff;
+    }
+    h1 {
+      color: #bbb;
+      margin: 0;
     }
     table {
       width: 80%;
@@ -79,7 +94,7 @@
       background-color: #666;
     }
     
-    /* Nuevos estilos para los comentarios */
+    /* Estilos para los comentarios */
     #comments {
       list-style-type: none;
       padding: 0;
@@ -119,7 +134,16 @@
   </style>
 </head>
 <body>
-  <h1>Flight Details</h1>
+  <header>
+    <h1>Vueling</h1>
+    <nav>
+      <a href="http://127.0.0.1:5000/">Información Aeropuerto</a>
+      <a href="http://127.0.0.1:5000/juego">Desafío</a>
+    </nav>
+  </header>
+  
+  <hr>
+  <h2>Flight Details</h2>
   <div id="flight-details"></div>
 
   <h2>Passenger Comments</h2>
