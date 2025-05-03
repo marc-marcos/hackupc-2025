@@ -20,25 +20,8 @@ def init_db():
         ''')
         conn.commit()
 
-# Add a new table for flight updates
-def init_flight_updates_table():
-    with sqlite3.connect(DATABASE) as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS flight_updates (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                flight_id TEXT NOT NULL,
-                update_text TEXT NOT NULL,
-                timestamp TEXT NOT NULL
-            )
-        ''')
-        conn.commit()
-
 # Call the function to initialize the database
 init_db()
-
-# Initialize the flight updates table
-init_flight_updates_table()
 
 @app.route('/post', methods=['POST'])
 def post_object():
@@ -49,7 +32,6 @@ def post_object():
 
         # Validate types
         string1, date_str, string2 = obj
-        datetime_obj = datetime.fromisoformat(date_str)  # ISO 8601 format
 
         # Insert into SQLite database
         with sqlite3.connect(DATABASE) as conn:
@@ -57,7 +39,7 @@ def post_object():
             cursor.execute('''
                 INSERT INTO data_store (string1, datetime_obj, string2)
                 VALUES (?, ?, ?)
-            ''', (string1, datetime_obj.isoformat(), string2))
+            ''', (string1, date_str, string2))
             conn.commit()
 
         return jsonify({"status": "success", "data": obj}), 201
@@ -75,9 +57,19 @@ def get_all_objects():
             rows = cursor.fetchall()
 
         # Format the data as a list of dictionaries
-        data = [{"string1": row[0], "datetime_obj": row[1], "string2": row[2]} for row in rows]
+        data = [
+            {
+                "string1": row[0],
+                "datetime_obj": row[1],  # Stored as a plain string
+                "string2": row[2]
+            }
+            for row in rows
+        ]
 
-        return jsonify({"status": "success", "data": data}), 200
+        return jsonify({
+            "status": "success",
+            "data_store": data
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -91,7 +83,7 @@ def post_flight_update():
 
         flight_id = data['flight_id']
         update_text = data['update_text']
-        timestamp = datetime.now().isoformat()  # Automatically record the current time
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Store as a simple string
 
         # Insert the update into the database
         with sqlite3.connect(DATABASE) as conn:
@@ -155,6 +147,3 @@ def display_flight_updates_html(flight_id):
 
     except Exception as e:
         return f"<p>Error: {str(e)}</p>", 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
