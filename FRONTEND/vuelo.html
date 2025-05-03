@@ -32,6 +32,32 @@
     tr {
       background-color: #000;
     }
+    #comment-form {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #333;
+      border-radius: 8px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      background-color: #222;
+      color: #bbb;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #444;
+      color: #bbb;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #666;
+    }
   </style>
 </head>
 <body>
@@ -41,10 +67,17 @@
   <h2>Passenger Comments</h2>
   <ul id="comments"></ul>
 
+  <!-- Comment Submission Form -->
+  <div id="comment-form">
+    <h3>Add a Comment</h3>
+    <input type="text" id="comment-input" placeholder="Enter your comment..." />
+    <button id="submit-comment">Submit Comment</button>
+  </div>
+
   <script>
     const params = new URLSearchParams(window.location.search);
     const flightId = params.get('id');
-
+  
     // Get flight details
     fetch('http://127.0.0.1:5000/get')
       .then(response => response.json())
@@ -54,7 +87,7 @@
           document.getElementById("flight-details").textContent = "Flight not found.";
           return;
         }
-
+  
         const table = document.createElement("table");
         const header = document.createElement("tr");
         ["Flight ID", "Departure", "Boarding Gate"].forEach(text => {
@@ -63,7 +96,7 @@
           header.appendChild(th);
         });
         table.appendChild(header);
-
+  
         const row = document.createElement("tr");
         [flight.string1, new Date(flight.datetime_obj).toLocaleString(), flight.string2].forEach(val => {
           const td = document.createElement("td");
@@ -71,10 +104,10 @@
           row.appendChild(td);
         });
         table.appendChild(row);
-
+  
         document.getElementById("flight-details").appendChild(table);
       });
-
+  
     // Get flight comments
     fetch(`http://127.0.0.1:5000/flight/updates/${flightId}`)
       .then(response => response.json())
@@ -90,6 +123,47 @@
           });
         }
       });
+  
+    // Submit a new comment
+    document.getElementById("submit-comment").addEventListener("click", function() {
+      const comment = document.getElementById("comment-input").value.trim();
+      if (comment) {
+        // Check if "No comments yet" message exists and remove it if it does
+        const commentsList = document.getElementById("comments");
+        if (commentsList.innerHTML === "<li>No comments yet.</li>") {
+          commentsList.innerHTML = ''; // Clear "No comments yet" message
+        }
+  
+        fetch('http://127.0.0.1:5000/flight/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            flight_id: flightId,
+            update_text: comment,
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "success") {
+            const newComment = document.createElement("li");
+            newComment.textContent = `${new Date(data.timestamp).toLocaleString()}: ${data.update_text}`;
+            document.getElementById("comments").appendChild(newComment);
+            document.getElementById("comment-input").value = '';  // Clear the input
+          } else {
+            alert("Error submitting the comment.");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Error submitting the comment.");
+        });
+      } else {
+        alert("Please enter a comment.");
+      }
+    });
   </script>
+  
 </body>
 </html>
