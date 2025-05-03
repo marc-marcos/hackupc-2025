@@ -82,7 +82,7 @@
       })
       .then(data => {
         const tableBody = document.getElementById("data-table");
-        data.data.forEach(item => {
+        data.data_store.forEach(item => {
           const row = document.createElement("tr");
   
           const flightId = document.createElement("td");
