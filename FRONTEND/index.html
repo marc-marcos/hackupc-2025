@@ -5,7 +5,7 @@
   <title>Vueling</title>
   <style>
     body {
-      background-color: #000000;
+      background-color: #000;
       color: #bbb;
       font-family: sans-serif;
       padding: 2rem;
@@ -14,10 +14,10 @@
       color: #bbb;
     }
     table {
-      width: 60%;
+      width: 80%;
       border-collapse: collapse;
       margin-top: 2rem;
-      background-color: #000000;
+      background-color: #000;
     }
     th, td {
       border: 1px solid #444;
@@ -25,13 +25,12 @@
       text-align: center;
     }
     th {
-      background-color: #000000;
+      background-color: #000;
       color: #bbb;
     }
-    tr{
-      background-color: #000000;
+    tr {
+      background-color: #000;
     }
-    
   </style>
 </head>
 <body>
@@ -44,13 +43,48 @@
         <th>Boarding Gate</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>VY1234</td>
-        <td>08:30</td>
-        <td>A12</td>
-      </tr>
+    <tbody id="data-table">
+      <!-- Data will go here -->
     </tbody>
   </table>
+
+  <script>
+    // Llamar a la API para obtener los datos
+    fetch('http://127.0.0.1:5000/get')
+      .then(response => {
+        if (!response.ok) throw new Error("Error en la respuesta del servidor");
+        return response.json();
+      })
+      .then(data => {
+        const tableBody = document.getElementById("data-table");
+        data.data.forEach(item => {
+          const row = document.createElement("tr");
+  
+          const flightId = document.createElement("td");
+          const flightLink = document.createElement("a");
+          flightLink.href = `vuelo.html?id=${item.string1}`;
+          flightLink.textContent = item.string1;
+          flightLink.style.color = "#bbb";
+          flightId.appendChild(flightLink);
+  
+          const departure = document.createElement("td");
+          departure.textContent = new Date(item.datetime_obj).toLocaleString(); // formatea fecha
+  
+          const gate = document.createElement("td");
+          gate.textContent = item.string2;
+  
+          row.appendChild(flightId);
+          row.appendChild(departure);
+          row.appendChild(gate);
+  
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+      });
+  </script>
+  
+
 </body>
 </html>

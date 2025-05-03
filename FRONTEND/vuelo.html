@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flight Info</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #bbb;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    h1, h2 {
+      color: #bbb;
+    }
+    table, ul {
+      width: 80%;
+      margin-top: 1rem;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #000;
+      color: #bbb;
+    }
+    tr {
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Flight Details</h1>
+  <div id="flight-details"></div>
+
+  <h2>Passenger Comments</h2>
+  <ul id="comments"></ul>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const flightId = params.get('id');
+
+    // Get flight details
+    fetch('http://127.0.0.1:5000/get')
+      .then(response => response.json())
+      .then(data => {
+        const flight = data.data.find(f => f.string1 === flightId);
+        if (!flight) {
+          document.getElementById("flight-details").textContent = "Flight not found.";
+          return;
+        }
+
+        const table = document.createElement("table");
+        const header = document.createElement("tr");
+        ["Flight ID", "Departure", "Boarding Gate"].forEach(text => {
+          const th = document.createElement("th");
+          th.textContent = text;
+          header.appendChild(th);
+        });
+        table.appendChild(header);
+
+        const row = document.createElement("tr");
+        [flight.string1, new Date(flight.datetime_obj).toLocaleString(), flight.string2].forEach(val => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          row.appendChild(td);
+        });
+        table.appendChild(row);
+
+        document.getElementById("flight-details").appendChild(table);
+      });
+
+    // Get flight comments
+    fetch(`http://127.0.0.1:5000/flight/updates/${flightId}`)
+      .then(response => response.json())
+      .then(data => {
+        const commentsList = document.getElementById("comments");
+        if (data.updates.length === 0) {
+          commentsList.innerHTML = "<li>No comments yet.</li>";
+        } else {
+          data.updates.forEach(update => {
+            const li = document.createElement("li");
+            li.textContent = `${new Date(update.timestamp).toLocaleString()}: ${update.update_text}`;
+            commentsList.appendChild(li);
+          });
+        }
+      });
+  </script>
+</body>
+</html>
