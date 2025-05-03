@@ -154,7 +154,7 @@
     fetch('http://127.0.0.1:5000/get')
       .then(response => response.json())
       .then(data => {
-        const flight = data.data.find(f => f.string1 === flightId);
+        const flight = data.data_store.find(f => f.string1 === flightId);
         if (!flight) {
           document.getElementById("flight-details").textContent = "Flight not found.";
           return;
@@ -191,24 +191,24 @@
           emptyMessage.innerHTML = "<div class='comment-content'>No comments yet.</div>";
           commentsList.appendChild(emptyMessage);
         } else {
-          data.updates.forEach (update => {
-            // Use the name from the update if it exists, otherwise default to "Vueling"
-            const name = update.name || "unknown";
-            const commentBox = createCommentElement(update.update_text, update.timestamp, name);
+          data.updates.forEach(update => {
+            // Use the submitter_name from the update if it exists, otherwise default to "unknown"
+            const submitter_name = update.submitter_name || "unknown";
+            const commentBox = createCommentElement(update.update_text, update.timestamp, submitter_name);
             commentsList.appendChild(commentBox);
           });
         }
       });
     
     // Function to create a styled comment element
-    function createCommentElement(text, timestamp, name = "Vueling") {
+    function createCommentElement(text, timestamp, submitter_name) {
       const li = document.createElement("li");
       const commentBox = document.createElement("div");
       commentBox.className = "comment-box";
       
       const header = document.createElement("div");
       header.className = "comment-header";
-      header.textContent = name + ":";
+      header.textContent = submitter_name + ":";
       
       const content = document.createElement("div");
       content.className = "comment-content";
@@ -227,24 +227,24 @@
     }
     
     // Function to check if name is reserved
-    function isReservedName(name) {
-      const lowerCaseName = name.toLowerCase();
+    function isReservedName(submitter_name) {
+      const lowerCaseName = submitter_name.toLowerCase();
       return lowerCaseName === "vueling";
     }
   
     // Submit a new comment
     document.getElementById("submit-comment").addEventListener("click", function() {
       const comment = document.getElementById("comment-input").value.trim();
-      const name = document.getElementById("name-input").value.trim();
+      const submitter_name = document.getElementById("name-input").value.trim();
       
       let isValid = true;
       
       // Check if name is empty
-      if (!name) {
+      if (!submitter_name) {
         document.getElementById("name-error").style.display = "block";
         document.getElementById("reserved-name-error").style.display = "none";
         isValid = false;
-      } else if (isReservedName(name)) {
+      } else if (isReservedName(submitter_name)) {
         // Check if name is reserved
         document.getElementById("name-error").style.display = "none";
         document.getElementById("reserved-name-error").style.display = "block";
@@ -268,9 +268,12 @@
       
       // Check if "No comments yet" message exists and remove it
       const commentsList = document.getElementById("comments");
-      const emptyMessage = commentsList.querySelector(".comment-box:only-child");
-      if (emptyMessage && emptyMessage.querySelector(".comment-content").textContent === "No comments yet.") {
-        commentsList.innerHTML = '';
+      if (commentsList.children.length === 1) {
+        const firstChild = commentsList.children[0];
+        const contentDiv = firstChild.querySelector(".comment-content");
+        if (contentDiv && contentDiv.textContent === "No comments yet.") {
+          commentsList.innerHTML = '';
+        }
       }
 
       fetch('http://127.0.0.1:5000/flight/update', {
@@ -281,13 +284,14 @@
         body: JSON.stringify({
           flight_id: flightId,
           update_text: comment,
-          name: name  // Adding name to the request
+          submitter_name: submitter_name
         }),
       })
       .then(response => response.json())
       .then(data => {
         if (data.status === "success") {
-          const newComment = createCommentElement(data.update_text, data.timestamp, name);
+          // Use the data returned from the server to ensure consistency
+          const newComment = createCommentElement(data.update_text, data.timestamp, data.submitter_name);
           document.getElementById("comments").appendChild(newComment);
           document.getElementById("comment-input").value = '';  // Clear comment input
           // We're not clearing the name input to make it easier for the same user to add multiple comments
