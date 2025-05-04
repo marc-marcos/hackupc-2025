@@ -1,2 +1,4 @@
 .venv/
 data_store.db
+backend/templates/
+backend/static
