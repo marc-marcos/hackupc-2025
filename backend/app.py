@@ -282,6 +282,27 @@ def add_qr():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route('/api/qr/<qr_string>', methods=['GET'])
+def get_qr_by_string(qr_string):
+    try:
+        # Fetch the QR object that matches the given qr_string
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT qr_string, qr_integer FROM qr_table WHERE qr_string = ?', (qr_string,))
+            row = cursor.fetchone()
+
+        # If no matching QR object is found, return a 404 error
+        if row is None:
+            return jsonify({"error": f"No QR object found with qr_string: {qr_string}"}), 404
+
+        # Format the data as a dictionary
+        qr_object = {"qr_string": row[0], "qr_integer": row[1]}
+
+        return jsonify({"status": "success", "qr_object": qr_object}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 ###############################
 #   HTML RENDERING METHODS
