@@ -17,7 +17,7 @@ fetch('http://127.0.0.1:5000/api/ranking')
         data.points.forEach(item => {
             const existingRow = Array.from(tableBody.rows).find(row => row.cells[0].textContent === item.name);
 
-            if (existingRow) {
+            if (existingRow) {  
             // si el usuario ya está en la tabla, sumamos los puntos
             const currentPoints = parseInt(existingRow.cells[1].textContent.replace(' p', ''), 10);
             const newPoints = currentPoints + item.points;
@@ -25,7 +25,7 @@ fetch('http://127.0.0.1:5000/api/ranking')
             } else {
             // si el usuario no está en la tabla, lo agregamos
             const row = document.createElement("tr");
-
+                    
             const nameCell = document.createElement("td");
             nameCell.textContent = item.name;
 

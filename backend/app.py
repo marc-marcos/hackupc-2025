@@ -40,7 +40,7 @@ def init_points_table():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 points INTEGER NOT NULL
-            )
+            )   
         ''')
         conn.commit()
 

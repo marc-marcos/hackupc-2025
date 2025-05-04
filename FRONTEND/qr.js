@@ -75,27 +75,47 @@ function escanear(username) {
           message.textContent = "QR detectado! Procesando...";
           stopCamera();
           
+
           try {
-            const response = await fetch('http://127.0.0.1:5000/api/postFlight', {
+            // Primero hacemos la petición GET con el contenido del QR
+            const qrContent = code.data;
+            const getResponse = await fetch(`http://127.0.0.1:5000/api/qr/${qrContent}`, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json'
+              }
+            });
+            
+            if (!getResponse.ok) {
+              throw new Error(`HTTP error en GET! status: ${getResponse.status}`);
+            }
+            
+            // Procesamos la respuesta GET
+            const getData = await getResponse.json();
+            const stringValue = getData.string; // Valor string de la respuesta
+            const integerValue = getData.integer; // Valor integer de la respuesta
+            
+            message.textContent = `Datos obtenidos: ${stringValue}. Enviando información...`;
+            
+            // Ahora hacemos la petición POST con el integer recibido
+            const postResponse = await fetch('http://127.0.0.1:5000/api/qr', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                // ! REPASAR QUE VAMOS A PONER EN LOS QR
-                id: username,
-                name: code.data,
-                points: code.data
+                //id: username,
+                name: stringValue,
+                points: integerValue
               }),
             });
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+            
+            if (!postResponse.ok) {
+              throw new Error(`HTTP error en POST! status: ${postResponse.status}`);
             }
-
-            const result = await response.json();
-            message.textContent = `QR registrado para ${username}! ${result.message || ''}`;
-          } catch (err) {
+            
+            const postResult = await postResponse.json();
+            message.textContent = `¡Datos registrados para ${username}! ${postResult.message || ''}`;          } catch (err) {
             console.error("Error al enviar datos:", err);
             message.textContent = "Error al registrar el QR. Intenta nuevamente.";
           }
