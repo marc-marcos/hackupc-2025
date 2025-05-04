@@ -178,31 +178,50 @@
   <header>
     <h1>Vueling</h1>
     <nav>
-      <a href="http://127.0.0.1:5000/">Información Aeropuerto</a>
+      <a href="http://127.0.0.1:5000/">Airport Information</a>
+      <a href="http://127.0.0.1:5000/map">Map</a>
       <a href="http://127.0.0.1:5000/ranking">Ranking</a>
     </nav>
   </header>
   
   <hr>
-  <h2>La búsqueda del tesoro: El desafío</h2>
-  <h3>Instrucciones</h3>
+  <h2>In Search of the Goat: The Challenge</h2>
+  <h3>Instructions</h3>
   <p>
-    ¡Bienvenido a la Búsqueda del Tesoro de Vueling! Si ha habido un apagón a nivel nacional o un apocalipsis zombie y tu vuelo se ha demorado, explora el aeropuerto y busca los códigos QR escondidos en diferentes zonas. 
-    Escanea tantos como puedas: cada QR te dará puntos. Al final del juego, consulta el ranking del desafío. 
-    Los tres jugadores con mayor puntuación ganarán un descuento exclusivo en su próximo destino con Vueling. 
-    ¡Buena suerte y a escanear!
+    <strong>Welcome to Vueling's Goat QR Treasure Hunt!</strong> If you're stranded due to a nationwide blackout or zombie apocalypse, turn your delay into an adventure!
+  </p>
+  
+  <p>
+    <strong>How to play:</strong> Explore the airport and scan hidden QR codes. But here's the twist - <strong>some are special goat QRs</strong> with bonus points!
+  </p>
+  
+  <p>
+    <strong>QR Code Values:</strong><br>
+    • <strong>Regular QR</strong> 🐐: <strong>10 points</strong><br>
+    • <strong>Rare Vueling Goat QR</strong> ✨: <strong>25 points</strong><br>
+  </p>
+  
+  <p>
+    <strong>Leaderboard Rewards:</strong> The top 3 scanners win:<br>
+    🥇 <strong>15% discount</strong> + free seat selection<br>
+    🥈 <strong>10% discount</strong><br>
+    🥉 <strong>5% discount</strong>
+  </p>
+  
+  <p>
+    Will you become the ultimate Goat QR Hunter?
   </p>
 
   <!-- formulario para ingresar nombre de usuario tambien -->
   <div id="comment-form">
-    <h3>Escanear un QR</h3>
-    <div id="name-error" class="error-message">Introduce tu nombre de usuario</div>
-    <input type="text" id="name-input" placeholder="Introduce tu nombre de usuario..." style="margin-bottom: 0.5rem;" required />
-    <p id="message">Pulsa el botón para empezar a escanear.</p>  
+    <h3>Scann a QR</h3>
+    <div id="name-error" class="error-message">Introduce your username</div>
+    <input type="text" id="name-input" placeholder="Introduce your username..." style="margin-bottom: 0.5rem;" required />
+    <p id="message">Press the button to start scanning.</p>  
     <video id="video" autoplay style="display:none;"></video>
     <canvas id="canvas" style="display:none;"></canvas>
     <button id="startScan" onclick="escanear(document.getElementById('name-input').value)" style="width: fit-content; padding: 4px 8px;">
-      Iniciar escaneo
+      Start scanning
     </button>
     
     <script src="/static/jsQR.js"></script>
