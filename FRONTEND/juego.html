@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vueling</title>
   <style>
     body {
@@ -9,49 +10,80 @@
       color: #bbb;
       font-family: sans-serif;
       margin: 0;
-      padding: 2rem;
+      padding: 1rem;
+      max-width: 100%;
     }
+    
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
+    
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
     nav a {
       color: #bbb;
       text-decoration: none;
       margin-left: 1rem;
     }
+    
     nav a:hover {
       color: #fff;
     }
+    
     h1 {
       color: #bbb;
       margin: 0;
+      font-size: 2rem; /* Tamaño consistente con index.html */
     }
+    
+    h2, h3 {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      line-height: 1.5;
+    }
+    
     table {
-      width: 60%;
+      width: 100%;
       border-collapse: collapse;
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       background-color: #000000;
     }
+    
     th, td {
       border: 1px solid #444;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
     }
+    
     th {
       background-color: #000000;
       color: #bbb;
     }
+    
     tr {
       background-color: #000000;
     }
+    
     #comment-form {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       padding: 1rem;
       background-color: #333;
       border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
     }
+    
     input[type="text"] {
       width: 100%;
       padding: 0.5rem;
@@ -60,11 +92,14 @@
       color: #bbb;
       border: 1px solid #444;
       border-radius: 4px;
+      box-sizing: border-box;
     }
+    
     input:focus {
       outline: none;
       border-color: #bbb;
     }
+    
     button {
       background-color: #444;
       color: #bbb;
@@ -72,41 +107,122 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      width: 100%;
+      max-width: 300px;
     }
+    
     button:hover {
       background-color: #666;
     }
+    
+    .error-message {
+      color: #ff6b6b;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    video, canvas {
+      max-width: 100%;
+      margin-bottom: 1rem;
+    }
 
+    /* Estilos responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      nav {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      nav a {
+        margin-left: 0;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      /* Eliminamos la reducción de tamaño para mantener consistencia con index.html */
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+      
+      h3 {
+        font-size: 1.1rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+      
+      #comment-form {
+        padding: 0.75rem;
+      }
+      
+      button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Vueling</h1>
     <nav>
-      <a href="http://127.0.0.1:5000/">Información Aeropuerto</a>
+      <a href="http://127.0.0.1:5000/">Airport Information</a>
+      <a href="http://127.0.0.1:5000/map">Map</a>
       <a href="http://127.0.0.1:5000/ranking">Ranking</a>
     </nav>
   </header>
   
   <hr>
-  <h2>La búsqueda del tesoro: El desafío</h2>
-  <h3>Instrucciones</h3>
+  <h2>In Search of the Goat: The Challenge</h2>
+  <h3>Instructions</h3>
   <p>
-    ¡Bienvenido a la Búsqueda del Tesoro de Vueling! Si ha habido un apagón a nivel nacional o un apocalipsis zombie y tu vuelo se ha demorado, explora el aeropuerto y busca los códigos QR escondidos en diferentes zonas. 
-    Escanea tantos como puedas: cada QR te dará puntos. Al final del juego, consulta el ranking del desafío. 
-    Los tres jugadores con mayor puntuación ganarán un descuento exclusivo en su próximo destino con Vueling. 
-    ¡Buena suerte y a escanear!
+    <strong>Welcome to Vueling's Goat QR Treasure Hunt!</strong> If you're stranded due to a nationwide blackout or zombie apocalypse, turn your delay into an adventure!
+  </p>
+  
+  <p>
+    <strong>How to play:</strong> Explore the airport and scan hidden QR codes. But here's the twist - <strong>some are special goat QRs</strong> with bonus points!
+  </p>
+  
+  <p>
+    <strong>QR Code Values:</strong><br>
+    • <strong>Regular QR</strong> 🐐: <strong>10 points</strong><br>
+    • <strong>Rare Vueling Goat QR</strong> ✨: <strong>25 points</strong><br>
+  </p>
+  
+  <p>
+    <strong>Leaderboard Rewards:</strong> The top 3 scanners win:<br>
+    🥇 <strong>15% discount</strong> + free seat selection<br>
+    🥈 <strong>10% discount</strong><br>
+    🥉 <strong>5% discount</strong>
+  </p>
+  
+  <p>
+    Will you become the ultimate Goat QR Hunter?
   </p>
 
   <!-- formulario para ingresar nombre de usuario tambien -->
   <div id="comment-form">
-    <h3>Escanear un QR</h3>
-    <div id="name-error" class="error-message">Introduce tu nombre de usuario</div>
-    <input type="text" id="name-input" placeholder="Introduce tu nombre de usuario..." style="margin-bottom: 0.5rem;" required />
-    <p id="message">Pulsa el botón para empezar a escanear.</p>  
+    <h3>Scann a QR</h3>
+    <div id="name-error" class="error-message">Introduce your username</div>
+    <input type="text" id="name-input" placeholder="Introduce your username..." style="margin-bottom: 0.5rem;" required />
+    <p id="message">Press the button to start scanning.</p>  
     <video id="video" autoplay style="display:none;"></video>
     <canvas id="canvas" style="display:none;"></canvas>
-    <button id="startScan" onclick="escanear(document.getElementById('name-input').value)">Iniciar escaneo</button>
+    <button id="startScan" onclick="escanear(document.getElementById('name-input').value)" style="width: fit-content; padding: 4px 8px;">
+      Start scanning
+    </button>
     
     <script src="/static/jsQR.js"></script>
     <script src="/static/qr.js"></script>
