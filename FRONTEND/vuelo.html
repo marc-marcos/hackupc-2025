@@ -2,19 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Flight Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vueling</title>
   <style>
     body {
-      background-color: #000;
+      background-color: #000000;
       color: #bbb;
       font-family: sans-serif;
-      padding: 2rem;
+      margin: 0;
+      padding: 1rem;
+      max-width: 100%;
     }
-    h1, h2 {
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
+    nav a {
       color: #bbb;
+      text-decoration: none;
+      margin-left: 1rem;
     }
+    
+    nav a:hover {
+      color: #fff;
+    }
+    
+    h1 {
+      color: #bbb;
+      margin: 0;
+      font-size: 2rem; /* Tamaño consistente con los otros archivos */
+    }
+    
+    h2, h3 {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
     table {
-      width: 80%;
+      width: 100%;
       margin-top: 1rem;
       border-collapse: collapse;
       background-color: #111;
@@ -22,11 +58,15 @@
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      table-layout: fixed;
     }
 
     th, td {
-      padding: 12px 16px;
+      padding: 10px;
       text-align: center;
+      word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     th {
@@ -48,12 +88,16 @@
     tr:hover {
       background-color: #222;
     }
+    
     #comment-form {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       padding: 1rem;
       background-color: #333;
       border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
     }
+    
     input[type="text"] {
       width: 100%;
       padding: 0.5rem;
@@ -62,11 +106,14 @@
       color: #bbb;
       border: 1px solid #444;
       border-radius: 4px;
+      box-sizing: border-box;
     }
+    
     input:focus {
       outline: none;
       border-color: #bbb;
     }
+    
     button {
       background-color: #444;
       color: #bbb;
@@ -74,32 +121,42 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      width: 100%;
+      max-width: 300px;
     }
+    
     button:hover {
       background-color: #666;
     }
     
-    /* Nuevos estilos para los comentarios */
+    /* Estilos para los comentarios */
     #comments {
       list-style-type: none;
       padding: 0;
-      width: 80%;
+      width: 100%;
+      box-sizing: border-box;
     }
+    
     .comment-box {
       background-color: #222;
       border-radius: 8px;
       padding: 1rem;
       margin-bottom: 1rem;
       position: relative;
+      word-wrap: break-word;
     }
+    
     .comment-header {
       font-weight: bold;
       margin-bottom: 0.5rem;
       color: #bbb;
     }
+    
     .comment-content {
       margin-bottom: 1.5rem;
+      line-height: 1.4;
     }
+    
     .comment-timestamp {
       position: absolute;
       bottom: 0.5rem;
@@ -110,16 +167,90 @@
     
     /* Error message style */
     .error-message {
-      color: #bbb;
+      color: #ff6b6b;
       font-size: 0.9rem;
       margin-top: -0.5rem;
       margin-bottom: 0.5rem;
       display: none;
     }
+
+    /* Estilos responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      nav {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      nav a {
+        margin-left: 0;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+      
+      h3 {
+        font-size: 1.1rem;
+      }
+      
+      th, td {
+        padding: 6px 4px;
+        font-size: 0.9rem;
+      }
+      
+      th {
+        font-size: 0.8rem;
+      }
+      
+      .comment-box {
+        padding: 0.75rem;
+      }
+      
+      .comment-timestamp {
+        position: static;
+        display: block;
+        text-align: right;
+        margin-top: 0.5rem;
+      }
+      
+      .comment-content {
+        margin-bottom: 0.5rem;
+      }
+      
+      #comment-form {
+        padding: 0.75rem;
+      }
+      
+      button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Flight Details</h1>
+  <header>
+    <h1>Vueling</h1>
+    <nav>
+      <a href="http://127.0.0.1:5000/">Información Aeropuerto</a>
+      <a href="http://127.0.0.1:5000/juego">Desafío</a>
+    </nav>
+  </header>
+  
+  <hr>
+  <h2>Flight Details</h2>
   <div id="flight-details"></div>
 
   <h2>Passenger Comments</h2>
@@ -133,13 +264,13 @@
     <div id="reserved-name-error" class="error-message">This name is reserved. Please use a different name.</div>
     <input type="text" id="comment-input" placeholder="Enter your comment..." required />
     <div id="comment-error" class="error-message">Please enter a comment</div>
-    <button id="submit-comment">Submit Comment</button>
+    <button id="submit-comment" style="width: fit-content; padding: 4px 8px;">
+      Submit Comment
+    </button>
   </div>
 
   <script>
     const flightId = "{{ flight_id }}"
-    console.log(flightId);
-    console.log(flightId);
     console.log(flightId);
     
     // Clear error messages on input
@@ -307,6 +438,5 @@
       });
     });
   </script>
-  
 </body>
 </html>
